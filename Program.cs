@@ -1,6 +1,8 @@
 using FriBergs_CarRental.Data;
+using FriBergs_CarRental.Data.Repository;
 using FriBergs_CarRental.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace FriBergs_CarRental
@@ -21,7 +23,10 @@ namespace FriBergs_CarRental
                 .AddRoles<IdentityRole<int>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddAutoMapper(typeof(Program));
 
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+           
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

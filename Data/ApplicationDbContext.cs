@@ -8,10 +8,12 @@ namespace FriBergs_CarRental.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
         public DbSet<CustomerOrder> customerOrders;
+        public DbSet<Car> Cars;
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+        public DbSet<FriBergs_CarRental.Models.Car> Car { get; set; } = default!;
     }
 }

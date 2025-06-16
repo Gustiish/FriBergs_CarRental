@@ -7,7 +7,9 @@ namespace FriBergs_CarRental.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public ICollection<CustomerOrder>? CustomerOrders { get; set; } 
-        //Om endast customer ska ha tillgång till CustomerOrders behövs det inte nav prop för annat.
+
+        //Ifall jag har en customer role måste den ha en nav prop till CustomerORder
+        public ICollection<CustomerOrder> CustomerOrder { get; set; } = new List<CustomerOrder>();
+ 
     }
 }

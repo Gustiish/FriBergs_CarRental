@@ -33,7 +33,7 @@ namespace FriBergs_CarRental.Data.Repository
         {
             try
             {
-                _dbSet.AddAsync(entity);
+                await _dbSet.AddAsync(entity);
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)

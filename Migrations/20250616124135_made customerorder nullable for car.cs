@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace FriBergs_CarRental.Data.Migrations
+namespace FriBergs_CarRental.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class madecustomerordernullableforcar : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
