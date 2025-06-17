@@ -8,44 +8,154 @@ using Microsoft.EntityFrameworkCore;
 using FriBergs_CarRental.Data;
 using FriBergs_CarRental.Models;
 using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
-
 
 namespace FriBergs_CarRental.Controllers
 {
     public class CarsController : Controller
     {
-        private readonly IGenericRepository<Car> _context;
-        private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
 
-        public CarsController(IGenericRepository<Car> context, IMapper mapper)
+        public CarsController(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         // GET: Cars
         public async Task<IActionResult> Index()
         {
-            return View(await _context.GetAllAsync());
+            return View(await _context.Car.ToListAsync());
         }
 
-        [Authorize("Roles = Admin")]
-        public async Task<IActionResult> Create()
+        // GET: Cars/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var car = await _context.Car
+                .FirstOrDefaultAsync(m => m.EntityId == id);
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            return View(car);
+        }
+
+        [Authorize(Roles = "Admin")]
+        // GET: Cars/Create
+        public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Cars/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [Authorize("Roles = Admin")]
-        public async Task<IActionResult> Create([Bind("Id, Images, Model, Brand")] Car car)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("EntityId,Images,Model,Brand")] Car car)
         {
             if (ModelState.IsValid)
             {
-                _context.AddAsync(car);
-                return RedirectToAction("Index");
+                _context.Add(car);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
             return View(car);
         }
 
+        // GET: Cars/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var car = await _context.Car.FindAsync(id);
+            if (car == null)
+            {
+                return NotFound();
+            }
+            return View(car);
+        }
+
+        // POST: Cars/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("EntityId,Images,Model,Brand")] Car car)
+        {
+            if (id != car.EntityId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(car);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CarExists(car.EntityId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(car);
+        }
+
+        // GET: Cars/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var car = await _context.Car
+                .FirstOrDefaultAsync(m => m.EntityId == id);
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            return View(car);
+        }
+
+        // POST: Cars/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var car = await _context.Car.FindAsync(id);
+            if (car != null)
+            {
+                _context.Car.Remove(car);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool CarExists(int id)
+        {
+            return _context.Car.Any(e => e.EntityId == id);
+        }
     }
 }

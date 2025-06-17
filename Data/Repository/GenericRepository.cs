@@ -99,11 +99,11 @@ namespace FriBergs_CarRental.Data.Repository
 
         }
 
-        public T GetById(int Id)
+        public T GetById(int EntityId)
         {
             try
             {
-                return _dbSet.Find(Id);
+                return _dbSet.Find(EntityId);
             }
             catch (Exception e)
             {
@@ -113,11 +113,11 @@ namespace FriBergs_CarRental.Data.Repository
 
         }
 
-        public async Task<T> GetByIdAsync(int Id)
+        public async Task<T> GetByIdAsync(int EntityId)
         {
             try
             {
-                return await _dbSet.FindAsync(Id);
+                return await _dbSet.FindAsync(EntityId);
             }
             catch (Exception e)
             {

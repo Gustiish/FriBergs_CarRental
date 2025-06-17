@@ -9,7 +9,7 @@ namespace FriBergs_CarRental
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -19,13 +19,20 @@ namespace FriBergs_CarRental
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<IdentityRole<int>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+            builder.Services.AddRazorPages();
+
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddAutoMapper(typeof(Program));
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
            
             var app = builder.Build();
 
@@ -53,7 +60,57 @@ namespace FriBergs_CarRental
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await SeedRoles.SeedAdminAsync(services);
+            }
+
             app.Run();
+        }
+        
+       
+    }
+
+    public static class SeedRoles
+    {
+        public static async Task SeedAdminAsync(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+
+
+
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole { Name = "Admin"});
+            }
+
+            if (await userManager.FindByEmailAsync("admin@fribergs.com") == null)
+            {
+                var adminUser = new ApplicationUser { 
+                    FirstName = "Isak",
+                    LastName = "Bäckström",
+                    UserName = "admin@fribergs.com",
+                    Email = "admin@fribergs.com",
+                    EmailConfirmed = true
+                };
+
+
+                var result = await userManager.CreateAsync(adminUser, "Admin123!");
+
+                if (!result.Succeeded){
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    throw new Exception($"Failed to create user: {errors}");
+                }
+
+                var createdUser = await userManager.FindByEmailAsync(adminUser.Email);
+
+                await userManager.AddToRoleAsync(createdUser, "Admin");
+            }
+
+           
         }
     }
 }

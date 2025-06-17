@@ -8,7 +8,7 @@ namespace FriBergs_CarRental.Data
         void Add(T entity);
 
         //Read
-        T GetById(int Id);
+        T GetById(int EntityId);
 
         //Update
         void Update(T entity);
@@ -24,7 +24,7 @@ namespace FriBergs_CarRental.Data
         Task AddAsync(T entity);
 
         //Read async
-        Task<T> GetByIdAsync(int Id);
+        Task<T> GetByIdAsync(int EntityId);
 
         //Update async
         Task UpdateAsync(T entity);

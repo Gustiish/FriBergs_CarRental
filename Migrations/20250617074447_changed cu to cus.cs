@@ -5,7 +5,7 @@
 namespace FriBergs_CarRental.Migrations
 {
     /// <inheritdoc />
-    public partial class madecustomerordernullableforcar : Migration
+    public partial class changedcutocus : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
