@@ -12,11 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Images" class="control-label"></label>
-                <input asp-for="Images" class="form-control" />
-                <span asp-validation-for="Images" class="text-danger"></span>
-            </div>
+        
             <div class="form-group">
                 <label asp-for="Model" class="control-label"></label>
                 <input asp-for="Model" class="form-control" />
@@ -26,6 +22,17 @@
                 <label asp-for="Brand" class="control-label"></label>
                 <input asp-for="Brand" class="form-control" />
                 <span asp-validation-for="Brand" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Images" class="control-label"></label>
+                <div class="input-group mb-3" style="display: flex; align-items: center; gap: 10px;">
+                    <input asp-for="Images[0]" class="form-control" id="imageInput"/>
+                    <button type="button" class="btn btn-success" id="addBtn">Add</button>
+                </div>
+                <div id="image-container">
+
+                </div>
+                <span asp-validation-for="Images" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -38,6 +45,81 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+<div id="displayImages">
+
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+
+            let imageString = [];
+
+            const container = $("#image-container");
+
+            $('#addBtn').on('click', function () {
+                const input = $('#imageInput').val();
+
+                if (input.trim() === "") {
+                    return;
+                }
+
+                imageString.push(input);
+
+                $("#imageInput").val("");
+                updateTextBox();
+
+                
+            });
+
+            function updateTextBox() {
+                container.empty();
+
+                imageString.forEach((value, index) => {
+                    container.append(
+                        $('<div>', { class: "input-group mb-3" }).append(
+                            $('<input>', {
+                                type: "text",
+                                class: "form-control",
+                                name: `Images[${index}]`,
+                                id: `Images_${index}__`,
+                                value: value,
+                                readonly: true
+                            }),
+                            $('<button>', {
+                                type: "button",
+                                class: "btn btn-danger btn-remove",
+                                text: "Remove"
+                            })
+                        )
+                    );
+                });
+            }
+
+            container.on('click', '.btn-remove', function () {
+                const wrapper = $(this).parent();
+                const input = wrapper.find('input');
+
+                const name = input.attr('name');
+                const index = parseInt(name.match(/\d+/)[0], 10);
+                imageString.splice(index, 1);
+
+                updateTextBox(); 
+            });
+
+
+
+
+
+
+
+        });
+
+    </script>
+
+
+
 }
+
+
