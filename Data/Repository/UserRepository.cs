@@ -36,12 +36,12 @@ namespace FriBergs_CarRental.Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<ApplicationUser> GetAll()
+        public List<ApplicationUser> GetAll()
         {
             return _context.Users.ToList();
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetAllAsync()
+        public async Task<List<ApplicationUser>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();
         }

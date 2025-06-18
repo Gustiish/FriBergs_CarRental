@@ -11,29 +11,61 @@
     <h4>Car</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Images)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Images)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Model)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Model)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Brand)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Brand)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Model)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Model)
+        </dd>
     </dl>
+    <div id="displayImages">
+    </div>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="EntityId" />
+        <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        (function () {
+
+            $(document).ready(function () {
+
+                    let imageString = @Html.Raw(Json.Serialize(Model.Images));
+                    const imageContainer = $("#displayImages");
+                    function updateImagePreview() {
+                            imageContainer.empty();
+
+                            imageString.forEach(value => {
+                                imageContainer.append(
+                                    $('<img>', {
+                                        src: value,
+                                        style: "width: 80px; height: auto; margin-right: 10px; margin-bottom: 10px;"
+                                    })
+                                );
+                            });
+                    }
+
+                   updateImagePreview();
+
+            })
+
+        })();
+
+
+
+
+    </script>
+}

@@ -12,23 +12,23 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        
-            <div class="form-group">
-                <label asp-for="Model" class="control-label"></label>
-                <input asp-for="Model" class="form-control" />
-                <span asp-validation-for="Model" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Brand" class="control-label"></label>
                 <input asp-for="Brand" class="form-control" />
                 <span asp-validation-for="Brand" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Images" class="control-label"></label>
                 <div class="input-group mb-3" style="display: flex; align-items: center; gap: 10px;">
-                    <input asp-for="Images[0]" class="form-control" id="imageInput"/>
+                    <input type="text" class="form-control" id="imageInput"/>
                     <button type="button" class="btn btn-success" id="addBtn">Add</button>
                 </div>
+                <p id="limitText" style="display: none;">Max 3 bilder!</p>
                 <div id="image-container">
 
                 </div>
@@ -52,71 +52,89 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        $(document).ready(function () {
+        (function () {
+            $(document).ready(function () {
 
-            let imageString = [];
+                let imageString = [];
 
-            const container = $("#image-container");
+                const container = $("#image-container");
+                const imageContainer = $("#displayImages");
 
-            $('#addBtn').on('click', function () {
-                const input = $('#imageInput').val();
+                $('#addBtn').on('click', function () {
+                    const input = $('#imageInput').val().trim();
 
-                if (input.trim() === "") {
-                    return;
+                    if (input === "") {
+                        return;
+                    }
+
+                    if (imageString.length >= 3) {
+                        $('#limitText').show();
+                        return;
+                    }
+
+                    imageString.push(input);
+
+                    $("#imageInput").val("");
+                    $('#limitText').hide();
+
+                    updateTextBox();
+                    updateImagePreview();
+                });
+
+                function updateTextBox() {
+                    container.empty();
+
+                    imageString.forEach((value, index) => {
+                        container.append(
+                            $('<div>', { class: "input-group mb-3" }).append(
+                                $('<input>', {
+                                    type: "text",
+                                    class: "form-control",
+                                    name: `Images[${index}]`,
+                                    id: `Images_${index}__`,
+                                    value: value,
+                                    readonly: true
+                                }),
+                                $('<button>', {
+                                    type: "button",
+                                    class: "btn btn-danger btn-remove",
+                                    text: "Remove"
+                                })
+                            )
+                        );
+                    });
                 }
 
-                imageString.push(input);
+                function updateImagePreview() {
+                    imageContainer.empty();
 
-                $("#imageInput").val("");
-                updateTextBox();
-
-                
-            });
-
-            function updateTextBox() {
-                container.empty();
-
-                imageString.forEach((value, index) => {
-                    container.append(
-                        $('<div>', { class: "input-group mb-3" }).append(
-                            $('<input>', {
-                                type: "text",
-                                class: "form-control",
-                                name: `Images[${index}]`,
-                                id: `Images_${index}__`,
-                                value: value,
-                                readonly: true
-                            }),
-                            $('<button>', {
-                                type: "button",
-                                class: "btn btn-danger btn-remove",
-                                text: "Remove"
+                    imageString.forEach(value => {
+                        imageContainer.append(
+                            $('<img>', {
+                                src: value,
+                                style: "width: 80px; height: auto; margin-right: 10px; margin-bottom: 10px;"
                             })
-                        )
-                    );
+                        );
+                    });
+                }
+
+                container.on('click', '.btn-remove', function () {
+                    const wrapper = $(this).parent();
+                    const input = wrapper.find('input');
+
+                    const name = input.attr('name');
+                    const index = parseInt(name.match(/\d+/)[0], 10);
+                    imageString.splice(index, 1);
+                    $('#limitText').hide();
+
+                    updateTextBox();
+                    updateImagePreview();
                 });
-            }
 
-            container.on('click', '.btn-remove', function () {
-                const wrapper = $(this).parent();
-                const input = wrapper.find('input');
-
-                const name = input.attr('name');
-                const index = parseInt(name.match(/\d+/)[0], 10);
-                imageString.splice(index, 1);
-
-                updateTextBox(); 
             });
-
-
-
-
-
-
-
-        });
-
+        })();
     </script>
+
 
 
 

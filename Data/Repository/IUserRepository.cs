@@ -19,7 +19,7 @@ namespace FriBergs_CarRental.Data.Repository
         void Delete(ApplicationUser user);
 
         //GetAll
-        IEnumerable<ApplicationUser> GetAll();
+        List<ApplicationUser> GetAll();
 
         Task AddAsync(ApplicationUser user);
 
@@ -29,7 +29,7 @@ namespace FriBergs_CarRental.Data.Repository
 
         Task DeleteAsync(ApplicationUser user);
 
-        Task<IEnumerable<ApplicationUser>> GetAllAsync();
+        Task<List<ApplicationUser>> GetAllAsync();
 
 
 

@@ -10,27 +10,63 @@
     <h4>Car</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Images)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Brand)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Images)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Brand)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Model)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Model)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Brand)
-        </dd>
+        </dd>       
     </dl>
 </div>
+<div id="displayImages">
+</div>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.EntityId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+
+@section Scripts {
+    @{      await Html.RenderPartialAsync("_ValidationScriptsPartial");   }
+<script>
+    (function () {
+
+        $(document).ready(function () { 
+                    
+                let imageString = @Html.Raw(Json.Serialize(Model.Images));
+                const imageContainer = $("#displayImages");
+                function updateImagePreview() {
+                        imageContainer.empty();
+
+                        imageString.forEach(value => {
+                            imageContainer.append(
+                                $('<img>', {
+                                    src: value,
+                                    style: "width: 80px; height: auto; margin-right: 10px; margin-bottom: 10px;"
+                                })
+                            );
+                        });
+                }
+        
+               updateImagePreview();
+        
+        })
+           
+    })();
+     
+
+
+
+</script>
+
+
+
+
+}
