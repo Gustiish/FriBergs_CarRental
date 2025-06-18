@@ -44,7 +44,6 @@ namespace FriBergs_CarRental.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        // GET: Cars/Create
         public IActionResult Create()
         {
             return View();

@@ -110,6 +110,10 @@ namespace FriBergs_CarRental
                 await userManager.AddToRoleAsync(createdUser, "Admin");
             }
 
+            if (!await roleManager.RoleExistsAsync("Customer"))
+            {
+                await roleManager.CreateAsync(new IdentityRole { Name = "Customer" });
+            }
            
         }
     }
