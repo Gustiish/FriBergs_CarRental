@@ -2,7 +2,6 @@ using FriBergs_CarRental.Data;
 using FriBergs_CarRental.Data.Repository;
 using FriBergs_CarRental.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace FriBergs_CarRental
@@ -33,7 +32,7 @@ namespace FriBergs_CarRental
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-           
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -68,8 +67,8 @@ namespace FriBergs_CarRental
 
             app.Run();
         }
-        
-       
+
+
     }
 
     public static class SeedRoles
@@ -84,14 +83,13 @@ namespace FriBergs_CarRental
 
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
-                await roleManager.CreateAsync(new IdentityRole { Name = "Admin"});
+                await roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
             }
 
             if (await userManager.FindByEmailAsync("admin@fribergs.com") == null)
             {
-                var adminUser = new ApplicationUser { 
-                    FirstName = "Isak",
-                    LastName = "Bäckström",
+                var adminUser = new ApplicationUser
+                {
                     UserName = "admin@fribergs.com",
                     Email = "admin@fribergs.com",
                     EmailConfirmed = true
@@ -100,7 +98,8 @@ namespace FriBergs_CarRental
 
                 var result = await userManager.CreateAsync(adminUser, "Admin123!");
 
-                if (!result.Succeeded){
+                if (!result.Succeeded)
+                {
                     var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                     throw new Exception($"Failed to create user: {errors}");
                 }
@@ -114,7 +113,7 @@ namespace FriBergs_CarRental
             {
                 await roleManager.CreateAsync(new IdentityRole { Name = "Customer" });
             }
-           
+
         }
     }
 }

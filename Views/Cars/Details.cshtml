@@ -28,6 +28,10 @@
 </div>
 
 <div>
+    @if (User.IsInRole("Customer"))
+    {
+        <a asp-controller="CustomerOrders" asp-action="CreateBooking" asp-route-id="@Model?.Id" class="btn btn-primary">Create Booking</a>
+    }
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

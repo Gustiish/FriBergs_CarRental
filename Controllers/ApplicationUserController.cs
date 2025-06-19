@@ -58,8 +58,6 @@ namespace FriBergs_CarRental.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FirstName, LastName, Email, RoleName")] ApplicationUserCreateViewModel userView)
         {
-
-
             if (ModelState.IsValid)
             {
                 ApplicationUser user = _mapper.Map<ApplicationUser>(userView);
@@ -100,8 +98,6 @@ namespace FriBergs_CarRental.Controllers
                 if (user == null)
                     return NotFound();
 
-                user.FirstName = userVM.FirstName;
-                user.LastName = userVM.LastName;
                 user.Email = userVM.Email;
                 user.UserName = userVM.Email;
 

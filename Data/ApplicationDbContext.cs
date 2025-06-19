@@ -28,6 +28,7 @@ namespace FriBergs_CarRental.Data
             });
         }
         public DbSet<FriBergs_CarRental.Models.Car> Car { get; set; } = default!;
+        public DbSet<FriBergs_CarRental.Models.CustomerOrder> CustomerOrder { get; set; } = default!;
 
 
 

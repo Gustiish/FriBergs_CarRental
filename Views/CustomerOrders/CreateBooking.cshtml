@@ -1,0 +1,125 @@
+﻿@model FriBergs_CarRental.Models.ViewModels.CreateCustomerOrderViewModel
+
+@{
+    ViewData["Title"] = "CreateBooking";
+}
+
+<h1>Create</h1>
+
+<h4>CustomerOrder</h4>
+<hr />
+<div class="row">
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Car.Brand)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Car.Brand)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Car.Model)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Car.Model)
+    </dd>
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="StartTime" class="control-label"></label>
+                <input asp-for="StartTime" class="form-control" id="StartTime" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndTime" class="control-label"></label>
+                <input asp-for="EndTime" class="form-control" id="EndTime" />
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <div id="displayPrice"></div>
+                <span asp-validation-for="Price" class="text-danger"></span>
+                <br />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+<div id="displayImages"></div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        (function () {
+            $(document).ready(function () {
+                const priceContainer = $("#displayPrice");
+                const imageContainer = $("#displayImages");           
+                const imageString = @Html.Raw(Json.Serialize(Model.Car.Images));
+
+                function updateImagePreview() {
+                    imageContainer.empty();
+
+                    imageString.forEach(value => {
+                        imageContainer.append(
+                            $('<img>', {
+                                src: value,
+                                style: "width: 80px; height: auto; margin-right: 10px; margin-bottom: 10px;"
+                            })
+                        );
+                    });
+                }
+
+                updateImagePreview();
+
+             
+                $("#StartTime, #EndTime").on('change input', checkDates);
+
+                function checkDates() {
+                    const startTime = new Date($("#StartTime").val());
+                    const endTime = new Date($("#EndTime").val());
+
+                    if (!isNaN(startTime.getTime()) && !isNaN(endTime.getTime())) {
+                        updatePrice(startTime, endTime);
+                    }
+                }
+
+                function updatePrice(start, end) {
+                    if (end > start) {
+                        const diffMs = end - start;
+                        const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+                        const price = diffDays * 1000;
+                        displayPrice(price);
+                    } else {
+                        priceContainer.empty();
+                        priceContainer.append($('<p>').text("Slutdatum måste vara senare än startdatum"));
+                    }
+                }
+
+                function displayPrice(price) {
+                    priceContainer.empty();
+
+                    const input = $('<input>', {
+                        type: 'number',
+                        id: 'Price',
+                        name: 'Price',
+                        class: 'form-control',
+                        value: price
+                    });
+
+                    priceContainer.append(input);
+                }
+            });
+        })();
+    </script>
+
+
+}

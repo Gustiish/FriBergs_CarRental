@@ -1,5 +1,4 @@
 ﻿using FriBergs_CarRental.Models.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace FriBergs_CarRental.Models
@@ -12,6 +11,8 @@ namespace FriBergs_CarRental.Models
         public string Model { get; set; }
         public string Brand { get; set; }
         public CustomerOrder? CustomerOrder { get; set; }
-        
+
+
+
     }
 }

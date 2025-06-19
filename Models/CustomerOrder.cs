@@ -14,5 +14,8 @@ namespace FriBergs_CarRental.Models
         public int Price { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
         public string ApplicationUserId { get; set; }
+
+
+
     }
 }
