@@ -1,36 +1,32 @@
-﻿using FriBergs_CarRental.Data;
-using FriBergs_CarRental.Models;
-using FriBergs_CarRental.Models.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using FriBergs_CarRental.Data;
+using FriBergs_CarRental.Models;
 
 namespace FriBergs_CarRental.Controllers
 {
-    public class CustomerOrdersController : Controller
+    public class UserCustomerOrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IGenericRepository<Car> _repoCar;
 
-        public CustomerOrdersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IGenericRepository<Car> repoCar)
+        public UserCustomerOrdersController(ApplicationDbContext context)
         {
             _context = context;
-            _userManager = userManager;
-            _repoCar = repoCar;
         }
 
-        // GET: CustomerOrders
+        // GET: UserCustomerOrders
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.CustomerOrder.Include(c => c.ApplicationUser).Include(c => c.Car);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: CustomerOrders/Details/5
-
+        // GET: UserCustomerOrders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -50,28 +46,20 @@ namespace FriBergs_CarRental.Controllers
             return View(customerOrder);
         }
 
-        // GET: CustomerOrders/Create
-        [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> CreateBooking(int id)
+        // GET: UserCustomerOrders/Create
+        public IActionResult Create()
         {
-            CreateCustomerOrderViewModel viewModel = new CreateCustomerOrderViewModel();
-
-            Car car = await _repoCar.GetByIdAsync(id);
-            if (car == null)
-            {
-                return NotFound();
-            }
-            viewModel.Car = car;
-            return View(viewModel);
+            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["CarId"] = new SelectList(_context.Car, "Id", "Id");
+            return View();
         }
 
-        // POST: CustomerOrders/Create
+        // POST: UserCustomerOrders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Customer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateBooking([Bind("Id,CarId,StartTime,EndTime,Price,ApplicationUserId")] CustomerOrder customerOrder)
+        public async Task<IActionResult> Create([Bind("Id,CarId,StartTime,EndTime,Price,ApplicationUserId")] CustomerOrder customerOrder)
         {
             if (ModelState.IsValid)
             {
@@ -84,7 +72,7 @@ namespace FriBergs_CarRental.Controllers
             return View(customerOrder);
         }
 
-        // GET: CustomerOrders/Edit/5
+        // GET: UserCustomerOrders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -102,7 +90,7 @@ namespace FriBergs_CarRental.Controllers
             return View(customerOrder);
         }
 
-        // POST: CustomerOrders/Edit/5
+        // POST: UserCustomerOrders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -139,7 +127,7 @@ namespace FriBergs_CarRental.Controllers
             return View(customerOrder);
         }
 
-        // GET: CustomerOrders/Delete/5
+        // GET: UserCustomerOrders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -159,7 +147,7 @@ namespace FriBergs_CarRental.Controllers
             return View(customerOrder);
         }
 
-        // POST: CustomerOrders/Delete/5
+        // POST: UserCustomerOrders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

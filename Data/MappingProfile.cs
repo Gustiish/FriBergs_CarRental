@@ -20,6 +20,15 @@ namespace FriBergs_CarRental.Data
                 .ForMember(dest => dest.CustomerOrders, opt => opt.MapFrom(src => src.CustomerOrders))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ReverseMap();
+
+            CreateMap<CreateCustomerOrderViewModel, CustomerOrder>()
+                .ForMember(dest => dest.Car, opt => opt.MapFrom(src => src.Car))
+                .ForMember(dest => dest.CarId, opt => opt.MapFrom(src => src.CarId))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ReverseMap();
+
         }
 
 

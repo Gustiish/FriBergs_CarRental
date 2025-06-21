@@ -22,16 +22,17 @@
         @Html.DisplayFor(model => model.Car.Model)
     </dd>
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="CreateBooking">
+            <input type="hidden" asp-for="CarId" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="StartTime" class="control-label"></label>
-                <input asp-for="StartTime" class="form-control" id="StartTime" />
+                <input asp-for="StartTime" class="form-control" id="StartTime" type="date" />
                 <span asp-validation-for="StartTime" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EndTime" class="control-label"></label>
-                <input asp-for="EndTime" class="form-control" id="EndTime" />
+                <input asp-for="EndTime" class="form-control" id="EndTime" type="date" />
                 <span asp-validation-for="EndTime" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -42,7 +43,7 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="CreateBooking" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -55,14 +56,14 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        @await Html.PartialAsync("_ValidationScriptsPartial")
     }
 
     <script>
         (function () {
             $(document).ready(function () {
                 const priceContainer = $("#displayPrice");
-                const imageContainer = $("#displayImages");           
+                const imageContainer = $("#displayImages");
                 const imageString = @Html.Raw(Json.Serialize(Model.Car.Images));
 
                 function updateImagePreview() {
@@ -80,7 +81,7 @@
 
                 updateImagePreview();
 
-             
+
                 $("#StartTime, #EndTime").on('change input', checkDates);
 
                 function checkDates() {
@@ -98,7 +99,9 @@
                         const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
                         const price = diffDays * 1000;
                         displayPrice(price);
-                    } else {
+                    } 
+                    else  
+                    {
                         priceContainer.empty();
                         priceContainer.append($('<p>').text("Slutdatum måste vara senare än startdatum"));
                     }
@@ -112,7 +115,8 @@
                         id: 'Price',
                         name: 'Price',
                         class: 'form-control',
-                        value: price
+                        value: price,
+                        readonly: true
                     });
 
                     priceContainer.append(input);

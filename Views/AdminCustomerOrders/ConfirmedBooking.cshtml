@@ -1,0 +1,13 @@
+﻿@model FriBergs_CarRental.Models.CustomerOrder
+
+@{
+    ViewData["Title"] = "ConfirmedBooking";
+}
+
+<h1>Bokningsbekräftelse för @Model.ApplicationUser.Email</h1>
+
+<h4>Du har nu bokat Bil ID: @Model.CarId</h4>
+<h4>Märke: @Model.Car.Brand</h4>
+<h4>Modell: @Model.Car.Model</h4>
+
+<a class="btn btn-primary" asp-controller="Cars" asp-action="Index">Tillbaka till bilar</a>

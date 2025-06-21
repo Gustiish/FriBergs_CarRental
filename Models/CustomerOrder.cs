@@ -9,8 +9,8 @@ namespace FriBergs_CarRental.Models
         public int Id { get; set; }
         public Car Car { get; set; }
         public int CarId { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateOnly StartTime { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public DateOnly EndTime { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public int Price { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
         public string ApplicationUserId { get; set; }

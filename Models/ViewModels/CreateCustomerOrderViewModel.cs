@@ -1,13 +1,17 @@
-﻿namespace FriBergs_CarRental.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FriBergs_CarRental.Models.ViewModels
 {
     public class CreateCustomerOrderViewModel
     {
-        public string Id { get; set; }
         public int CarId { get; set; }
-        public Car Car { get; set; }
+
+        public Car? Car { get; set; }
         public int Price { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        [Required(ErrorMessage = "Startdatum krävs")]
+        public DateOnly StartTime { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        [Required(ErrorMessage = "Slutdatum krävs")]
+        public DateOnly EndTime { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
 
 
