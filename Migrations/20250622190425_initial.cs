@@ -30,9 +30,6 @@ namespace FriBergs_CarRental.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EntityId = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -57,7 +54,7 @@ namespace FriBergs_CarRental.Migrations
                 name: "Car",
                 columns: table => new
                 {
-                    EntityId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Images = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Model = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -65,7 +62,7 @@ namespace FriBergs_CarRental.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Car", x => x.EntityId);
+                    table.PrimaryKey("PK_Car", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,17 +175,17 @@ namespace FriBergs_CarRental.Migrations
                 name: "CustomerOrder",
                 columns: table => new
                 {
-                    EntityId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CarEntityId = table.Column<int>(type: "int", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CarId = table.Column<int>(type: "int", nullable: false),
+                    StartTime = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndTime = table.Column<DateOnly>(type: "date", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomerOrder", x => x.EntityId);
+                    table.PrimaryKey("PK_CustomerOrder", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CustomerOrder_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
@@ -196,10 +193,10 @@ namespace FriBergs_CarRental.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CustomerOrder_Car_CarEntityId",
-                        column: x => x.CarEntityId,
+                        name: "FK_CustomerOrder_Car_CarId",
+                        column: x => x.CarId,
                         principalTable: "Car",
-                        principalColumn: "EntityId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -248,10 +245,9 @@ namespace FriBergs_CarRental.Migrations
                 column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomerOrder_CarEntityId",
+                name: "IX_CustomerOrder_CarId",
                 table: "CustomerOrder",
-                column: "CarEntityId",
-                unique: true);
+                column: "CarId");
         }
 
         /// <inheritdoc />

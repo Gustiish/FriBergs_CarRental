@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FriBergs_CarRental.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250621132756_removed")]
-    partial class removed
+    [Migration("20250622190425_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -143,8 +143,7 @@ namespace FriBergs_CarRental.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("CarId")
-                        .IsUnique();
+                    b.HasIndex("CarId");
 
                     b.ToTable("CustomerOrder");
                 });
@@ -295,8 +294,8 @@ namespace FriBergs_CarRental.Migrations
                         .IsRequired();
 
                     b.HasOne("FriBergs_CarRental.Models.Car", "Car")
-                        .WithOne("CustomerOrder")
-                        .HasForeignKey("FriBergs_CarRental.Models.CustomerOrder", "CarId")
+                        .WithMany("CustomerOrders")
+                        .HasForeignKey("CarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -363,7 +362,7 @@ namespace FriBergs_CarRental.Migrations
 
             modelBuilder.Entity("FriBergs_CarRental.Models.Car", b =>
                 {
-                    b.Navigation("CustomerOrder");
+                    b.Navigation("CustomerOrders");
                 });
 #pragma warning restore 612, 618
         }
