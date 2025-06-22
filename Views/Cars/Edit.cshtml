@@ -50,6 +50,12 @@
 </div>
 
 
+@{
+    Layout = "_Layout";
+    ViewBag.HideNavBar = false;
+}
+
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 

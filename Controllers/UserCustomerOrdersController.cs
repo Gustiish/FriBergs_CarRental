@@ -1,170 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
 using FriBergs_CarRental.Data;
 using FriBergs_CarRental.Models;
+using FriBergs_CarRental.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FriBergs_CarRental.Controllers
 {
+    [Authorize(Roles = "Customer")]
     public class UserCustomerOrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IGenericRepository<Car> _repoCar;
+        private readonly IGenericRepository<CustomerOrder> _repoOrders;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IMapper _mapper;
 
-        public UserCustomerOrdersController(ApplicationDbContext context)
+        public UserCustomerOrdersController(ApplicationDbContext context, IGenericRepository<Car> repoCar, IGenericRepository<CustomerOrder> repoOrder, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _context = context;
+            _repoCar = repoCar;
+            _repoOrders = repoOrder;
+            _userManager = userManager;
+            _mapper = mapper;
         }
 
-        // GET: UserCustomerOrders
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.CustomerOrder.Include(c => c.ApplicationUser).Include(c => c.Car);
-            return View(await applicationDbContext.ToListAsync());
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userOrders = _context.CustomerOrder.Where(x => x.ApplicationUserId == userId);
+            return View(userOrders);
         }
 
-        // GET: UserCustomerOrders/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> CreateBooking(int id)
         {
-            if (id == null)
+            CreateCustomerOrderViewModel viewModel = new CreateCustomerOrderViewModel();
+
+            Car car = await _repoCar.GetByIdAsync(id);
+            if (car == null)
             {
                 return NotFound();
             }
-
-            var customerOrder = await _context.CustomerOrder
-                .Include(c => c.ApplicationUser)
-                .Include(c => c.Car)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customerOrder == null)
-            {
-                return NotFound();
-            }
-
-            return View(customerOrder);
+            viewModel.Car = car;
+            viewModel.CarId = car.Id;
+            return View(viewModel);
         }
 
-        // GET: UserCustomerOrders/Create
-        public IActionResult Create()
-        {
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["CarId"] = new SelectList(_context.Car, "Id", "Id");
-            return View();
-        }
-
-        // POST: UserCustomerOrders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CarId,StartTime,EndTime,Price,ApplicationUserId")] CustomerOrder customerOrder)
+        public async Task<IActionResult> CreateBooking([Bind("CarId,Car,StartTime,EndTime,Price")] CreateCustomerOrderViewModel customerOrderVM)
         {
-            if (ModelState.IsValid)
+            if (!IsBookingAvailable(customerOrderVM.CarId, customerOrderVM.StartTime, customerOrderVM.EndTime))
             {
-                _context.Add(customerOrder);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", customerOrder.ApplicationUserId);
-            ViewData["CarId"] = new SelectList(_context.Car, "Id", "Id", customerOrder.CarId);
-            return View(customerOrder);
-        }
-
-        // GET: UserCustomerOrders/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customerOrder = await _context.CustomerOrder.FindAsync(id);
-            if (customerOrder == null)
-            {
-                return NotFound();
-            }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", customerOrder.ApplicationUserId);
-            ViewData["CarId"] = new SelectList(_context.Car, "Id", "Id", customerOrder.CarId);
-            return View(customerOrder);
-        }
-
-        // POST: UserCustomerOrders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CarId,StartTime,EndTime,Price,ApplicationUserId")] CustomerOrder customerOrder)
-        {
-            if (id != customerOrder.Id)
-            {
-                return NotFound();
+                ViewBag.ErrorMessage = "Dem datumen är redan upptagna.";
+                customerOrderVM.Car = await _repoCar.GetByIdAsync(customerOrderVM.CarId);
+                return View(customerOrderVM);
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(customerOrder);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CustomerOrderExists(customerOrder.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                CustomerOrder customerOrder = _mapper.Map<CustomerOrder>(customerOrderVM);
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                customerOrder.ApplicationUserId = userId;
+                customerOrder.Car = await _repoCar.GetByIdAsync(customerOrderVM.CarId);
+
+                await _repoOrders.AddAsync(customerOrder);
+
+                return RedirectToAction("ConfirmedBooking", new { orderId = customerOrder.Id });
+
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", customerOrder.ApplicationUserId);
-            ViewData["CarId"] = new SelectList(_context.Car, "Id", "Id", customerOrder.CarId);
-            return View(customerOrder);
+
+            customerOrderVM.Car = await _repoCar.GetByIdAsync(customerOrderVM.CarId);
+            return View(customerOrderVM);
+
         }
 
-        // GET: UserCustomerOrders/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult ConfirmedBooking(int orderId)
         {
-            if (id == null)
-            {
+            var order = _context.CustomerOrder.Include(x => x.Car).Include(x => x.ApplicationUser).FirstOrDefault(x => x.Id == orderId);
+
+            if (order == null)
                 return NotFound();
-            }
-
-            var customerOrder = await _context.CustomerOrder
-                .Include(c => c.ApplicationUser)
-                .Include(c => c.Car)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customerOrder == null)
-            {
-                return NotFound();
-            }
-
-            return View(customerOrder);
+            return View(order);
         }
 
-        // POST: UserCustomerOrders/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        private bool IsBookingAvailable(int carId, DateOnly start, DateOnly end)
         {
-            var customerOrder = await _context.CustomerOrder.FindAsync(id);
-            if (customerOrder != null)
+            if (_context.CustomerOrder.Any(o => o.CarId == carId && start <= o.EndTime && end >= o.StartTime))
             {
-                _context.CustomerOrder.Remove(customerOrder);
+                return false;
             }
+            else { return true; }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
         }
 
-        private bool CustomerOrderExists(int id)
-        {
-            return _context.CustomerOrder.Any(e => e.Id == id);
-        }
+
+
     }
 }

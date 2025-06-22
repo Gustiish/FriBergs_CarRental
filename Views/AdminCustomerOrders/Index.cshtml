@@ -6,9 +6,6 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -17,7 +14,7 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Car.Model)
-            </th>'
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.StartTime)
             </th>
@@ -63,3 +60,7 @@
         }
     </tbody>
 </table>
+@{
+    Layout = "_Layout";
+    ViewBag.HideNavBar = false;
+}

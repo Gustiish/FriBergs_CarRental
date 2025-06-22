@@ -46,11 +46,15 @@
                 <input type="submit" value="CreateBooking" class="btn btn-primary" />
             </div>
         </form>
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <p class="text-danger">@ViewBag.ErrorMessage</p>
+        }
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Cars" asp-action="Index">Back to List</a>
 </div>
 <div id="displayImages"></div>
 
@@ -94,7 +98,7 @@
                 }
 
                 function updatePrice(start, end) {
-                    if (end > start) {
+                    if (end >= start) {
                         const diffMs = end - start;
                         const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
                         const price = diffDays * 1000;
@@ -121,6 +125,8 @@
 
                     priceContainer.append(input);
                 }
+
+                updatePrice();
             });
         })();
     </script>

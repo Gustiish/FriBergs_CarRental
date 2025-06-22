@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using FriBergs_CarRental.Data;
 using FriBergs_CarRental.Models;
-using FriBergs_CarRental.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace FriBergs_CarRental.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminCustomerOrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -47,47 +46,6 @@ namespace FriBergs_CarRental.Controllers
             return View(customerOrder);
         }
 
-        [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> CreateBooking(int id)
-        {
-            CreateCustomerOrderViewModel viewModel = new CreateCustomerOrderViewModel();
-
-            Car car = await _repoCar.GetByIdAsync(id);
-            if (car == null)
-            {
-                return NotFound();
-            }
-            viewModel.Car = car;
-            viewModel.CarId = car.Id;
-            return View(viewModel);
-        }
-
-        [Authorize(Roles = "Customer")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateBooking([Bind("CarId,Car,StartTime,EndTime,Price")] CreateCustomerOrderViewModel customerOrderVM)
-        {
-            if (ModelState.IsValid)
-            {
-                CustomerOrder customerOrder = _mapper.Map<CustomerOrder>(customerOrderVM);
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                customerOrder.ApplicationUserId = userId;
-                customerOrder.Car = await _repoCar.GetByIdAsync(customerOrderVM.CarId);
-
-
-
-                await _repoOrders.AddAsync(customerOrder);
-
-                return RedirectToAction("ConfirmedBooking", new { orderId = customerOrder.Id });
-
-            }
-
-            customerOrderVM.Car = await _repoCar.GetByIdAsync(customerOrderVM.CarId);
-            return View(customerOrderVM);
-
-        }
-
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -121,18 +79,6 @@ namespace FriBergs_CarRental.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CustomerOrderExists(int id)
-        {
-            return _context.CustomerOrder.Any(e => e.Id == id);
-        }
 
-        public IActionResult ConfirmedBooking(int orderId)
-        {
-            var order = _context.CustomerOrder.Include(x => x.Car).Include(x => x.ApplicationUser).FirstOrDefault(x => x.Id == orderId);
-
-            if (order == null)
-                return NotFound();
-            return View(order);
-        }
     }
 }

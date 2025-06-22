@@ -30,11 +30,25 @@
 <div>
     @if (User.IsInRole("Customer"))
     {
-        <a asp-controller="CustomerOrders" asp-action="CreateBooking" asp-route-id="@Model?.Id" class="btn btn-primary">Create Booking</a>
+        <a asp-controller="UserCustomerOrders" asp-action="CreateBooking" asp-route-id="@Model?.Id" class="btn btn-primary">Boka bilen!</a>
     }
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    else if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> <p>|</p>      
+        <a asp-action="Index">Back to List</a >
+    }
+    else if (!User.Identity.IsAuthenticated)
+    {
+          <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">Boka bilen!</a>
+    }
+
 </div>
+
+
+@{
+    Layout = "_Layout";
+    ViewBag.HideNavBar = false;
+}
 
 
 @section Scripts {
