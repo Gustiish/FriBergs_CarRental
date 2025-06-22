@@ -31,7 +31,11 @@ namespace FriBergs_CarRental.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userOrders = _context.CustomerOrder.Where(x => x.ApplicationUserId == userId);
+            IEnumerable<CustomerOrder> userOrders = _context.CustomerOrder.Where(x => x.ApplicationUserId == userId).Include(x => x.Car);
+            if (userOrders == null)
+            {
+                userOrders = new List<CustomerOrder>();
+            }
             return View(userOrders);
         }
 
@@ -96,10 +100,30 @@ namespace FriBergs_CarRental.Controllers
             }
             else { return true; }
 
+        }
+
+        public async Task<IActionResult> Delete(int Id)
+        {
+            var customerOrder = await _repoOrders.GetByIdAsync(Id);
+            if (customerOrder == null)
+            {
+                return NotFound();
+            }
+            return View(customerOrder);
 
         }
 
-
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int Id)
+        {
+            var orderToDelete = await _repoOrders.GetByIdAsync(Id);
+            if (orderToDelete != null)
+            {
+                await _repoOrders.DeleteAsync(orderToDelete);
+            }
+            return RedirectToAction("Index");
+        }
 
     }
 }

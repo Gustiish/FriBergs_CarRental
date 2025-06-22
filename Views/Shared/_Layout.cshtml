@@ -3,58 +3,65 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FriBergs_CarRental</title>
+    <title>@ViewData["Title"] - Fribergs</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FriBergs_CarRental.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light #e3ebee mb-3">
             <div class="container d-flex justify-content-center">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FriBergs_CarRental</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/Images/Screenshot 2025-06-21 at 18-36-51 Projektuppgift.pdf.png" 
+                    style="width: 50px; height: 50px;"/></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    @if (!ViewBag.HideNavBar)
-                    {
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <ul class="navbar-nav">
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Cars" asp-action="Index">Bilar</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="ApplicationUser" asp-action="Index">Användare</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="AdminCustomerOrders" asp-action="Index">AdminCustomerOrders</a>
-                                </li>
-                            </ul>
-                        }
-                        @if(User.IsInRole("Customer"))
-                        {
+
+
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav d-flex flex-row gap-2">
+                            <li class="nav-item me-2">
+                                <a class="btn btn-secondary nav-button" asp-area="" asp-controller="Home" asp-action="Index">Hem</a>
+                            </li>
+                            <li class="nav-item me-2">
+                                <a class="btn btn-secondary nav-button" asp-area="" asp-controller="Cars" asp-action="Index">Bilar</a>
+                            </li>
+                            <li class="nav-item me-2">
+                                <a class="btn btn-secondary nav-button" asp-area="" asp-controller="ApplicationUser" asp-action="Index">Användare</a>
+                            </li>
+                            <li class="nav-item me-2">
+                                <a class="btn btn-secondary nav-button" asp-area="" asp-controller="AdminCustomerOrders" asp-action="Index">Hantera beställningar</a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                @if (User.IsInRole("Customer"))
+                {
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav d-flex flex-row gap-2">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Cars" asp-action="Index">Bilar</a>
+                                <a class="btn btn-secondary nav-button" asp-area="" asp-controller="Cars" asp-action="Index">Bilar</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="UserCustomerOrders" asp-action="Index">Mina beställningar</a>
+                                <a class="btn btn-secondary nav-button" asp-area="" asp-controller="UserCustomerOrders" asp-action="Index">Mina beställningar</a>
                             </li>
-                        }
-                       
-                    }
-                   
-                    <partial name="_LoginPartial" />
-                </div>
+                        </ul>
+                    </div>
+                }
+
+
+
+                <partial name="_LoginPartial" />
+            </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container" >
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

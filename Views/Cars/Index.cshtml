@@ -4,83 +4,88 @@
     ViewData["Title"] = "Index";
 }
 
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
 
-<h1>Bilar</h1>
+            <h1>Bilar</h1>
 
-@if (User.IsInRole("Admin"))
-{
-    <h1>Index</h1>
-
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Images)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Model)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Brand)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+            @if (User.IsInRole("Admin"))
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Images.Count)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Model)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Brand)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
+
+                <p>
+                    <a asp-action="Create" class="btn btn-primary">Ny bil</a>
+                </p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Antal bilder
+                            </th>
+                            <th>
+                                Tillverkare
+                            </th>
+                            <th>
+                                Modell
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Images.Count)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Brand)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Model)
+                                </td>
+                              
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id">Ändra</a> |
+                                    <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
+                                    <a asp-action="Delete" asp-route-id="@item.Id">Radera</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
-        </tbody>
-    </table>
-}
 
-@if (User.IsInRole("Customer") || !User.Identity.IsAuthenticated)
-{
-    <div class="container">
-        <div class="row">
-            @foreach (var item in Model)
+            @if (User.IsInRole("Customer") || !User.Identity.IsAuthenticated)
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                            <img src="@item.Images[0]" class="card-img-top">
-                            <div class="card-body">
-                                <h5 class="card-title">@item.Brand</h5>
-                                <h5 class="card-text">@item.Model</h5>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Se mer detaljer!</a>
+                <div class="container">
+                    <div class="row">
+                        @foreach (var item in Model)
+                        {
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100 d-flex flex-column">
+                                    <img src="@item.Images[0]" class="card-img-top" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title" style="min-height: 2.5rem;">@item.Brand</h5>
+                                        <p class="card-text" style="min-height: 2.5rem;">@item.Model</p>
+                                        <div class="mt-auto">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Se mer detaljer!</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        }
                     </div>
                 </div>
             }
         </div>
     </div>
-}
-
-@{
-    Layout = "_Layout";
-    ViewBag.HideNavBar = false;
-}
+</div>
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 

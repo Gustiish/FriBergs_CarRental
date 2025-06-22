@@ -5,35 +5,37 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>Car</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.RoleName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RoleName)
-        </dd>
-    </dl>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1>Details</h1>
+
+            <div>
+                <h4>Car</h4>
+                <hr />
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Email)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Email)
+                    </dd>
+                    <dt class="col-sm-2">
+                        Rollnamn
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.RoleName)
+                    </dd>
+                </dl>
+            </div>
+
+
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model?.Id">Ändra</a> |
+                <a asp-action="Index">Tillbaka till listan</a>
+            </div>
+
+        </div>
+    </div>
 </div>
-
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@{
-    Layout = "_Layout";
-    ViewBag.HideNavBar = false;
-}
-

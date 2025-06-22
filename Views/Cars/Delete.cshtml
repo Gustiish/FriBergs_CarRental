@@ -4,11 +4,11 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1>Radera</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Är du säker att du vill radera?</h3>
 <div>
-    <h4>Car</h4>
+    <h4>Bil</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -33,10 +33,6 @@
         <a asp-action="Index">Back to List</a>
     </form>
 </div>
-@{
-    Layout = "_Layout";
-    ViewBag.HideNavBar = false;
-}
 
 
 @section Scripts {
@@ -57,7 +53,7 @@
                                 imageContainer.append(
                                     $('<img>', {
                                         src: value,
-                                        style: "width: 80px; height: auto; margin-right: 10px; margin-bottom: 10px;"
+                                        style: "width: 300px; height: 200px; object-fit: cover; margin-bottom: 10px;"
                                     })
                                 );
                             });
