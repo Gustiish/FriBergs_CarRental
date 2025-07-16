@@ -1,0 +1,1 @@
+CRUD hemsida gjord med ASP.NET MVC. Gjord för skolans projektuppgift. Använder identity för rolltilldelning mellan "customer" och "admin". Hantering av databasen sker via EF core. Det seedas en admin roll i koden så logga in med "admin@fribergs.com" med lösen "Admin123!"
